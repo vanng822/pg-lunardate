@@ -10,45 +10,47 @@ Datum
 lunardate_in(PG_FUNCTION_ARGS)
 {
     char *str = PG_GETARG_CSTRING(0);
-    int year, month, day;
-    lunar_date *d;
-    //solardate *dd;
+    int year, month, day, result;
+    solar_date *d;
     if (sscanf(str, "%d-%d-%d", &year, &month, &day) != 3) {
         ereport(ERROR,
                 (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
                  errmsg("invalid input syntax for lunardate: \"%s\"",
                         str)));
     }
-    d = (lunar_date *) palloc(sizeof(lunar_date));
-    d->year = year;
-    d->month = month;
-    d->day = day;
-    elog(INFO, "scan %d-%d-%d", d->year, d->month, d->day);
-    PG_RETURN_POINTER(d);
+    d = lunar2solar(day, month, year, 0, TIMEZONE);
+    result = jd_from_date(d->day, d->month, d->year);
+    elog(INFO, "scan %d-%d-%d (jd %d)", d->year, d->month, d->day, result);
+    PG_RETURN_INT32(result);
 }
 
 PG_FUNCTION_INFO_V1(lunardate_out);
 Datum
 lunardate_out(PG_FUNCTION_ARGS)
 {
-    lunar_date *d = (lunar_date *) PG_GETARG_POINTER(0);
-    elog(INFO, "from mem %d-%d-%d", d->year, d->month, d->day);
+    int jd = PG_GETARG_INT32(0);
     char *result;
+    solar_date *sdate;
+    lunar_date *ldate;
+    elog(INFO, "from mem %d", jd);
+    sdate = jd_to_date(jd);
+    ldate = solar2lunar(sdate->day, sdate->month, sdate->year, TIMEZONE);
     int size = 10 + VARHDRSZ;
     result = (char *) palloc(size);
-    snprintf(result, size, "%d-%d-%d", d->year, d->month, d->day);
+    snprintf(result, size, "%d-%d-%d", ldate->year, ldate->month, ldate->day);
     PG_RETURN_CSTRING(result);
 }
 
-PG_FUNCTION_INFO_V1(lunardate_eq);
+PG_FUNCTION_INFO_V1(lunar2solardate);
 Datum
-lunardate_eq(PG_FUNCTION_ARGS)
+lunar2solardate(PG_FUNCTION_ARGS)
 {
-    lunar_date *dleft = (lunar_date *) PG_GETARG_POINTER(0);
-    lunar_date *dright = (lunar_date *) PG_GETARG_POINTER(1);
-    elog(INFO, "compare %d-%d-%d", dleft->year, dleft->month, dleft->day);
-    elog(INFO, "compare %d-%d-%d", dright->year, dright->month, dright->day);
-    bool *result;
-    result = (lunar_date_compare(dleft, dright) == 0);
+    int jd = PG_GETARG_INT32(0);
+    char *result;
+    solar_date *sdate;
+    sdate = jd_to_date(jd);
+    int size = 10 + VARHDRSZ;
+    result = (char *) palloc(size);
+    snprintf(result, size, "%d-%d-%d", sdate->year, sdate->month, sdate->day);
     PG_RETURN_CSTRING(result);
 }
