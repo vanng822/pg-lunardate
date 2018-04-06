@@ -24,28 +24,6 @@ typedef struct {
 	int leap;
 } lunar_date;
 
-int lunar_date_compare(lunar_date *dl, lunar_date *dr) {
-  if (dl->year < dr->year) {
-    return -1;
-  } else if (dl->year > dr->year) {
-    return 1;
-  }
-  // same year
-  if (dl->month < dr->month) {
-    return -1;
-  } else if (dl->month > dr->month) {
-    return 1;
-  }
-  // same month
-  if (dl->day < dr->day) {
-    return -1;
-  } else if (dl->day > dr->day) {
-    return 1;
-  }
-  // TODO: checking leap
-  return 0;
-}
-
 int jd_from_date(int dd, int mm, int yyyy) {
 	int a, y, m, jd;
 	a = (int) ((14 - mm) / 12);

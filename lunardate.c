@@ -7,8 +7,7 @@ PG_MODULE_MAGIC;
 
 PG_FUNCTION_INFO_V1(lunardate_in);
 Datum
-lunardate_in(PG_FUNCTION_ARGS)
-{
+lunardate_in(PG_FUNCTION_ARGS) {
     char *str = PG_GETARG_CSTRING(0);
     int year, month, day, result;
     solar_date *d;
@@ -27,8 +26,7 @@ lunardate_in(PG_FUNCTION_ARGS)
 
 PG_FUNCTION_INFO_V1(lunardate_out);
 Datum
-lunardate_out(PG_FUNCTION_ARGS)
-{
+lunardate_out(PG_FUNCTION_ARGS) {
     int jd = PG_GETARG_INT32(0);
     char *result;
     solar_date *sdate;
@@ -46,8 +44,7 @@ lunardate_out(PG_FUNCTION_ARGS)
 
 PG_FUNCTION_INFO_V1(lunar2solardate);
 Datum
-lunar2solardate(PG_FUNCTION_ARGS)
-{
+lunar2solardate(PG_FUNCTION_ARGS) {
     int jd = PG_GETARG_INT32(0);
     char *result;
     solar_date *sdate;
