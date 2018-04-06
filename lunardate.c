@@ -20,7 +20,8 @@ lunardate_in(PG_FUNCTION_ARGS)
     }
     d = lunar2solar(day, month, year, 0, TIMEZONE);
     result = jd_from_date(d->day, d->month, d->year);
-    elog(INFO, "scan %d-%d-%d (jd %d)", d->year, d->month, d->day, result);
+    elog(INFO, "lunardate_in %d-%d-%d (jd %d)", d->year, d->month, d->day, result);
+    pfree(d);
     PG_RETURN_INT32(result);
 }
 
@@ -32,12 +33,14 @@ lunardate_out(PG_FUNCTION_ARGS)
     char *result;
     solar_date *sdate;
     lunar_date *ldate;
-    elog(INFO, "from mem %d", jd);
+    elog(INFO, "lunardate_out %d", jd);
     sdate = jd_to_date(jd);
     ldate = solar2lunar(sdate->day, sdate->month, sdate->year, TIMEZONE);
     int size = 10 + VARHDRSZ;
     result = (char *) palloc(size);
     snprintf(result, size, "%d-%d-%d", ldate->year, ldate->month, ldate->day);
+    pfree(sdate);
+    pfree(ldate);
     PG_RETURN_CSTRING(result);
 }
 
@@ -52,5 +55,6 @@ lunar2solardate(PG_FUNCTION_ARGS)
     int size = 10 + VARHDRSZ;
     result = (char *) palloc(size);
     snprintf(result, size, "%d-%d-%d", sdate->year, sdate->month, sdate->day);
+    pfree(sdate);
     PG_RETURN_CSTRING(result);
 }

@@ -6,6 +6,7 @@
  */
 #include <stdlib.h>
 #include <math.h>
+#include "postgres.h"
 
 int TIMEZONE = 7;
 
@@ -61,7 +62,7 @@ int jd_from_date(int dd, int mm, int yyyy) {
 solar_date *
 jd_to_date(int jd) {
 	int a, b, c, d, e, m, day, month, year;
-	solar_date *date = (solar_date *) malloc(sizeof(solar_date));
+	solar_date *date = (solar_date *) palloc(sizeof(solar_date));
 
 	if (jd > 2299160) { // After 5/10/1582, Gregorian calendar
 		a = jd + 32044;
@@ -205,7 +206,7 @@ solar2lunar(int dd, int mm, int yyyy, int time_zone) {
 		lunar_year -= 1;
 	}
 	lunar_date * res;
-	res = (lunar_date *) malloc(sizeof(lunar_date));
+	res = (lunar_date *) palloc(sizeof(lunar_date));
 	res->day = lunar_day;
 	res->month = lunar_month;
 	res->year = lunar_year;
@@ -238,7 +239,7 @@ lunar2solar(int lunar_day, int lunar_month, int lunar_year,
 			leap_month += 12;
 		}
 		if (lunar_leap != 0 && lunar_month != lunar_leap) {
-			res = (solar_date *)malloc(sizeof(solar_date));
+			res = (solar_date *)palloc(sizeof(solar_date));
 			res->day = 0;
 			res->month = 0;
 			res->year = 0;
