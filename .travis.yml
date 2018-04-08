@@ -6,4 +6,5 @@ addons:
     packages:
       - postgresql-server-dev-9.5
 script:
-  make installcheck
+  - make install
+  - make installcheck
