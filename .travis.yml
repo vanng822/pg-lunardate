@@ -6,5 +6,5 @@ addons:
     packages:
       - postgresql-server-dev-9.5
 script:
-  - make install
   - make installcheck
+  - echo regression.diffs
