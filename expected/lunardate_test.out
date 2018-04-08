@@ -1,0 +1,32 @@
+DROP TABLE IF EXISTS lunartest;
+NOTICE:  table "lunartest" does not exist, skipping
+DROP EXTENSION IF EXISTS lunardate;
+NOTICE:  extension "lunardate" does not exist, skipping
+CREATE EXTENSION lunardate;
+CREATE TABLE lunartest(
+  id serial PRIMARY KEY,
+  from_date lunardate,
+  to_date lunardate
+);
+insert into lunartest(from_date, to_date) values('2018-10-10', '2018-10-13');
+insert into lunartest(from_date, to_date) values('2018-11-11', '2018-11-13');
+select * from lunartest;
+ id | from_date  |  to_date   
+----+------------+------------
+  1 | 2018-10-10 | 2018-10-13
+  2 | 2018-11-11 | 2018-11-13
+(2 rows)
+
+select id, from_date as lunar_date, lunar2solardate(from_date) as solar_date from lunartest;
+ id | lunar_date | solar_date 
+----+------------+------------
+  1 | 2018-10-10 | 2018-11-16
+  2 | 2018-11-11 | 2018-12-17
+(2 rows)
+
+select * from lunartest where from_date = '2018-11-11';
+ id | from_date  |  to_date   
+----+------------+------------
+  2 | 2018-11-11 | 2018-11-13
+(1 row)
+
