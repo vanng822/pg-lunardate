@@ -1,0 +1,9 @@
+services:
+  - postgresql
+addons:
+  postgresql: "9.5"
+  apt:
+    packages:
+      - postgresql-server-dev-9.5
+scripts:
+  make installcheck
