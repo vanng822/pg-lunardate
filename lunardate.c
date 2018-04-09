@@ -49,9 +49,9 @@ lunardate_out(PG_FUNCTION_ARGS) {
     PG_RETURN_CSTRING(result);
 }
 
-PG_FUNCTION_INFO_V1(lunar2solardate);
+PG_FUNCTION_INFO_V1(lunardate2date);
 Datum
-lunar2solardate(PG_FUNCTION_ARGS) {
+lunardate2date(PG_FUNCTION_ARGS) {
     int jd = PG_GETARG_INT32(0);
     DateADT		date;
     solar_date *sdate;
