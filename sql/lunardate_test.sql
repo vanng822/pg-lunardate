@@ -7,8 +7,8 @@ CREATE TABLE lunartest(
   to_date lunardate
 );
 SET DateStyle=ISO;
-insert into lunartest(from_date, to_date) values('2018-10-10', '2018-10-13');
-insert into lunartest(from_date, to_date) values('2018-11-11', '2018-11-13');
+insert into lunartest(from_date, to_date) values('2018-10-10', '2019-01-13');
+insert into lunartest(from_date, to_date) values('2018-11-11', '2018-12-01');
 select * from lunartest;
 select id, from_date as lunar_date, from_date::date as solar_date from lunartest;
 select * from lunartest where from_date = '2018-11-11';

@@ -13,7 +13,7 @@ lunardate_in(PG_FUNCTION_ARGS) {
     char *str = PG_GETARG_CSTRING(0);
     int year, month, day, result;
     solar_date *d;
-    if (sscanf(str, "%d-%d-%d", &year, &month, &day) != 3) {
+    if (sscanf(str, "%u-%u-%u", &year, &month, &day) != 3) {
         ereport(ERROR,
                 (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
                  errmsg("invalid input syntax for lunardate: \"%s\"",
@@ -43,7 +43,7 @@ lunardate_out(PG_FUNCTION_ARGS) {
     ldate = solar2lunar(sdate->day, sdate->month, sdate->year, TIMEZONE);
     int size = 10 + VARHDRSZ;
     result = (char *) palloc(size);
-    snprintf(result, size, "%d-%d-%d", ldate->year, ldate->month, ldate->day);
+    snprintf(result, size, "%04u-%02u-%02u", ldate->year, ldate->month, ldate->day);
     pfree(sdate);
     pfree(ldate);
     PG_RETURN_CSTRING(result);
