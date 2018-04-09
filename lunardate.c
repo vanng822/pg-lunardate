@@ -1,4 +1,6 @@
 #include "postgres.h"
+#include "utils/date.h"
+#include "utils/datetime.h"
 #include "fmgr.h"
 #include "utils/builtins.h"
 #include "amlich.c"
@@ -18,6 +20,11 @@ lunardate_in(PG_FUNCTION_ARGS) {
                         str)));
     }
     d = lunar2solar(day, month, year, 0, TIMEZONE);
+    if (!IS_VALID_JULIAN(d->year, d->month, d->day)) {
+      ereport(ERROR,
+  				(errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
+  				 errmsg("date out of range: \"%s\"", str)));
+    }
     result = jd_from_date(d->day, d->month, d->year);
     //elog(INFO, "lunardate_in %d-%d-%d (jd %d)", d->year, d->month, d->day, result);
     pfree(d);
@@ -46,12 +53,10 @@ PG_FUNCTION_INFO_V1(lunar2solardate);
 Datum
 lunar2solardate(PG_FUNCTION_ARGS) {
     int jd = PG_GETARG_INT32(0);
-    char *result;
+    DateADT		date;
     solar_date *sdate;
     sdate = jd_to_date(jd);
-    int size = 10 + VARHDRSZ;
-    result = (char *) palloc(size);
-    snprintf(result, size, "%d-%d-%d", sdate->year, sdate->month, sdate->day);
+    date = date2j(sdate->year, sdate->month, sdate->day) - POSTGRES_EPOCH_JDATE;
     pfree(sdate);
-    PG_RETURN_CSTRING(result);
+    PG_RETURN_DATEADT(date);
 }

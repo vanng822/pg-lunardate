@@ -17,10 +17,12 @@ CREATE TYPE lunardate (
 );
 
 CREATE FUNCTION lunar2solardate(lunardate)
-RETURNS cstring
+RETURNS date
 AS '$libdir/lunardate'
 LANGUAGE C IMMUTABLE STRICT;
 
+CREATE CAST (lunardate AS date)
+WITH FUNCTION lunar2solardate(lunardate);
 
 CREATE FUNCTION lunardate_eq(lunardate, lunardate)
 RETURNS boolean LANGUAGE internal IMMUTABLE AS 'int4eq';
