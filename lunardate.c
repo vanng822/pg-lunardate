@@ -59,3 +59,19 @@ lunardate2date(PG_FUNCTION_ARGS) {
     pfree(sdate);
     PG_RETURN_DATEADT(date);
 }
+
+PG_FUNCTION_INFO_V1(date2lunardate);
+Datum
+date2lunardate(PG_FUNCTION_ARGS) {
+    DateADT	date = PG_GETARG_DATEADT(0);
+    struct pg_tm tt,
+			   *tm = &tt;
+    if (DATE_NOT_FINITE(date)) {
+      ereport(ERROR,
+        (errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
+        errmsg("Can not handle not finite date")));
+    }
+    j2date(date + POSTGRES_EPOCH_JDATE, &(tm->tm_year), &(tm->tm_mon), &(tm->tm_mday));
+    int result = jd_from_date(tm->tm_mday, tm->tm_mon, tm->tm_year);
+    PG_RETURN_INT32(result);
+}

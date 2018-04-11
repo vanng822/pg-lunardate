@@ -24,6 +24,14 @@ LANGUAGE C IMMUTABLE STRICT;
 CREATE CAST (lunardate AS date)
 WITH FUNCTION lunardate2date(lunardate);
 
+CREATE FUNCTION date2lunardate(date)
+RETURNS lunardate
+AS '$libdir/lunardate'
+LANGUAGE C IMMUTABLE STRICT;
+
+CREATE CAST (date AS lunardate)
+WITH FUNCTION date2lunardate(date);
+
 CREATE FUNCTION lunardate_eq(lunardate, lunardate)
 RETURNS boolean LANGUAGE internal IMMUTABLE AS 'int4eq';
 
