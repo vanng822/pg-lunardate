@@ -13,13 +13,34 @@ lunardate_in(PG_FUNCTION_ARGS) {
     char *str = PG_GETARG_CSTRING(0);
     int year, month, day, result;
     solar_date *d;
+    lunar_date *l;
     if (sscanf(str, "%u-%u-%u", &year, &month, &day) != 3) {
         ereport(ERROR,
           (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
           errmsg("invalid input syntax for lunardate: \"%s\"", str)));
     }
+    // lunar2solar just accumulate total number of julian days
+    // It first calculate for the year and the month
+    // and then added the day to it. To be able to detect if a lunardate
+    // is not correct we convert to solar date and back
+    // if they are the same then the lunar date is correct
+    // incorrect lunar date example:
+    //  lunar 1991-04-51 -> solar 1991-07-03 -> lunar 1991-05-22
+    // correct lunar example:
+    // lunar 1991-04-22 -> solar 1991-06-04 -> lunar 1991-04-22
+    // TODO: better way to do this check
     d = lunar2solar(day, month, year, 0, TIMEZONE);
+    l = solar2lunar(d->day, d->month, d->year, TIMEZONE);
+    if (l->year != year || l->month != month || l->day != day) {
+      pfree(d);
+      pfree(l);
+      ereport(ERROR,
+        (errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
+        errmsg("date out of range: \"%s\"", str)));
+    }
+    pfree(l);
     if (!IS_VALID_JULIAN(d->year, d->month, d->day)) {
+        pfree(d);
         ereport(ERROR,
           (errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
           errmsg("date out of range: \"%s\"", str)));

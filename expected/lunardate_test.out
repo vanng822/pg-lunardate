@@ -43,3 +43,11 @@ select '2018-12-17'::date::lunardate;
  2018-11-11
 (1 row)
 
+select '1991-04-51'::lunardate;
+ERROR:  date out of range: "1991-04-51"
+LINE 1: select '1991-04-51'::lunardate;
+               ^
+select '1991-13-12'::lunardate;
+ERROR:  date out of range: "1991-13-12"
+LINE 1: select '1991-13-12'::lunardate;
+               ^

@@ -14,3 +14,5 @@ select id, from_date as lunar_date, from_date::date as solar_date from lunartest
 select * from lunartest where from_date = '2018-11-11';
 select '2018-11-11'::lunardate::date;
 select '2018-12-17'::date::lunardate;
+select '1991-04-51'::lunardate;
+select '1991-13-12'::lunardate;
