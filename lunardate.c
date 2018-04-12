@@ -3,7 +3,7 @@
 #include "utils/datetime.h"
 #include "fmgr.h"
 #include "utils/builtins.h"
-#include "amlich.c"
+#include "lib/amlich.c"
 
 PG_MODULE_MAGIC;
 
