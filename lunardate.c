@@ -96,3 +96,33 @@ date2lunardate(PG_FUNCTION_ARGS) {
     int result = jd_from_date(tm->tm_mday, tm->tm_mon, tm->tm_year);
     PG_RETURN_INT32(result);
 }
+
+PG_FUNCTION_INFO_V1(lunardate_plus_interval);
+Datum
+lunardate_plus_interval(PG_FUNCTION_ARGS) {
+    // first arg is lunardate
+    int jd = PG_GETARG_INT32(0);
+    // second arg is Interval
+    Interval *span = PG_GETARG_INTERVAL_P(1);
+    if (span->time > 0) {
+      ereport(ERROR,
+        (errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
+        errmsg("Does not support time fraction")));
+    }
+    PG_RETURN_INT32(jd + span->month * DAYS_PER_MONTH + span->day);
+}
+
+PG_FUNCTION_INFO_V1(lunardate_minus_interval);
+Datum
+lunardate_minus_interval(PG_FUNCTION_ARGS) {
+    // first arg is lunardate
+    int jd = PG_GETARG_INT32(0);
+    // second arg is Interval
+    Interval *span = PG_GETARG_INTERVAL_P(1);
+    if (span->time > 0) {
+      ereport(ERROR,
+        (errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
+        errmsg("Does not support time fraction")));
+    }
+    PG_RETURN_INT32(jd - (span->month * DAYS_PER_MONTH + span->day));
+}

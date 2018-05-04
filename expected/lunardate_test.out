@@ -51,3 +51,33 @@ select '1991-13-12'::lunardate;
 ERROR:  date out of range: "1991-13-12"
 LINE 1: select '1991-13-12'::lunardate;
                ^
+select ('2018-11-13'::lunardate + interval '20 years');
+  ?column?  
+------------
+ 2038-08-07
+(1 row)
+
+select ('2018-11-13'::lunardate + interval '20 years 1 month');
+  ?column?  
+------------
+ 2038-09-08
+(1 row)
+
+select ('2018-11-13'::lunardate + interval '20 years 1 day');
+  ?column?  
+------------
+ 2038-08-08
+(1 row)
+
+select ('2018-11-13'::lunardate + interval '20 years 1 month 1 day');
+  ?column?  
+------------
+ 2038-09-09
+(1 row)
+
+select ('2018-11-13'::lunardate + interval '20 years 1 month 1 day 1 hour');
+ERROR:  Does not support time fraction
+select ('2018-11-13'::lunardate + interval '20 years 1 month 1 day 1 minute');
+ERROR:  Does not support time fraction
+select ('2018-11-13'::lunardate + interval '20 years 1 month 1 day 1 second');
+ERROR:  Does not support time fraction

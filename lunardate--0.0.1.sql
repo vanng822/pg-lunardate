@@ -29,6 +29,16 @@ RETURNS lunardate
 AS '$libdir/lunardate'
 LANGUAGE C IMMUTABLE STRICT;
 
+CREATE FUNCTION lunardate_plus_interval(lunardate, interval)
+RETURNS lunardate
+AS '$libdir/lunardate'
+LANGUAGE C IMMUTABLE STRICT;
+
+CREATE FUNCTION lunardate_minus_interval(lunardate, interval)
+RETURNS lunardate
+AS '$libdir/lunardate'
+LANGUAGE C IMMUTABLE STRICT;
+
 CREATE CAST (date AS lunardate)
 WITH FUNCTION date2lunardate(date);
 
@@ -55,6 +65,19 @@ RETURNS integer LANGUAGE internal IMMUTABLE AS 'btint4cmp';
 
 CREATE FUNCTION hash_lunardate(lunardate)
 RETURNS integer LANGUAGE internal IMMUTABLE AS 'hashint4';
+
+
+CREATE OPERATOR + (
+  LEFTARG = lunardate,
+  RIGHTARG = interval,
+  PROCEDURE = lunardate_plus_interval
+);
+
+CREATE OPERATOR - (
+  LEFTARG = lunardate,
+  RIGHTARG = interval,
+  PROCEDURE = lunardate_minus_interval
+);
 
 CREATE OPERATOR = (
   LEFTARG = lunardate,
