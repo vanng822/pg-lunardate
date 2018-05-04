@@ -81,3 +81,33 @@ select ('2018-11-13'::lunardate + interval '20 years 1 month 1 day 1 minute');
 ERROR:  Does not support time fraction
 select ('2018-11-13'::lunardate + interval '20 years 1 month 1 day 1 second');
 ERROR:  Does not support time fraction
+select ('2018-11-13'::lunardate - interval '2 years');
+  ?column?  
+------------
+ 2016-12-01
+(1 row)
+
+select ('2018-11-13'::lunardate - interval '2 years 1 month');
+  ?column?  
+------------
+ 2016-11-01
+(1 row)
+
+select ('2018-11-13'::lunardate - interval '2 years 1 day');
+  ?column?  
+------------
+ 2016-11-30
+(1 row)
+
+select ('2018-11-13'::lunardate - interval '2 years 1 month 1 day');
+  ?column?  
+------------
+ 2016-10-30
+(1 row)
+
+select ('2018-11-13'::lunardate - interval '2 years 1 month 1 day 1 hour');
+ERROR:  Does not support time fraction
+select ('2018-11-13'::lunardate - interval '2 years 1 month 1 day 1 minute');
+ERROR:  Does not support time fraction
+select ('2018-11-13'::lunardate - interval '2 years 1 month 1 day 1 second');
+ERROR:  Does not support time fraction
