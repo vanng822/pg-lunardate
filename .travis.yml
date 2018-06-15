@@ -12,4 +12,5 @@ before_script:
 
 script:
   - make PGUSER=postgres installcheck
+  - cat results/lunardate_test.out
   - cat regression.diffs
