@@ -5,6 +5,10 @@ addons:
   apt:
     packages:
       - postgresql-server-dev-9.5
+
+before_script:
+  - psql -c 'create database contrib_regression;' -U postgres
+
 script:
   - sudo make install
   - PGUSER=postgres sudo make installcheck --debug=a
