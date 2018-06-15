@@ -11,5 +11,5 @@ before_script:
   - psql -c 'CREATE EXTENSION lunardate;' -U postgres
 
 script:
-  - PGUSER=postgres make installcheck
+  - make PGUSER=postgres installcheck
   - cat regression.diffs
