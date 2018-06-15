@@ -5,8 +5,11 @@ addons:
   apt:
     packages:
       - postgresql-server-dev-9.5
-      
-script:
+
+before_script:
   - sudo make install
+  - psql -c 'CREATE EXTENSION lunardate;' -U postgres
+
+script:
   - PGUSER=postgres make installcheck
   - cat regression.diffs
