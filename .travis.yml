@@ -7,5 +7,5 @@ addons:
       - postgresql-server-dev-9.5
 script:
   - sudo make install
-  - PGUSER=postgres make installcheck --debug=a
+  - PGUSER=postgres sudo make installcheck --debug=a
   - cat regression.diffs
