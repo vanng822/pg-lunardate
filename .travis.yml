@@ -8,9 +8,6 @@ addons:
 
 before_script:
   - sudo make install
-  - psql -c 'CREATE EXTENSION lunardate;' -U postgres
 
 script:
   - make PGUSER=postgres installcheck
-  - cat results/lunardate_test.out
-  - cat regression.diffs

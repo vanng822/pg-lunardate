@@ -1,7 +1,6 @@
+SET client_min_messages TO WARNING;
 DROP TABLE IF EXISTS lunartest;
-NOTICE:  table "lunartest" does not exist, skipping
 DROP EXTENSION IF EXISTS lunardate;
-NOTICE:  extension "lunardate" does not exist, skipping
 CREATE EXTENSION lunardate;
 CREATE TABLE lunartest(
   id serial PRIMARY KEY,
