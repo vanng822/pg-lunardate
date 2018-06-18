@@ -110,3 +110,41 @@ select ('2018-11-13'::lunardate - interval '2 years 1 month 1 day 1 minute');
 ERROR:  Does not support time fraction
 select ('2018-11-13'::lunardate - interval '2 years 1 month 1 day 1 second');
 ERROR:  Does not support time fraction
+select lunardate_date_part('year', '2018-11-13'::lunardate);
+ lunardate_date_part 
+---------------------
+                2018
+(1 row)
+
+select lunardate_date_part('month', '2018-11-13'::lunardate);
+ lunardate_date_part 
+---------------------
+                  11
+(1 row)
+
+select lunardate_date_part('day', '2018-11-13'::lunardate);
+ lunardate_date_part 
+---------------------
+                  13
+(1 row)
+
+select lunardate_date_part('blabla', '2018-11-13'::lunardate);
+ERROR:  Unknown date part
+select lunardate_date_part('year', from_date) from lunartest order by id asc limit 1;
+ lunardate_date_part 
+---------------------
+                2018
+(1 row)
+
+select lunardate_date_part('month', from_date) from lunartest order by id asc limit 1;
+ lunardate_date_part 
+---------------------
+                  10
+(1 row)
+
+select lunardate_date_part('day', from_date) from lunartest order by id asc limit 1;
+ lunardate_date_part 
+---------------------
+                  10
+(1 row)
+

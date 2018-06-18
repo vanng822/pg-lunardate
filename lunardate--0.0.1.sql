@@ -39,6 +39,11 @@ RETURNS lunardate
 AS '$libdir/lunardate'
 LANGUAGE C IMMUTABLE STRICT;
 
+CREATE FUNCTION lunardate_date_part(text, lunardate)
+RETURNS int
+AS '$libdir/lunardate'
+LANGUAGE C IMMUTABLE STRICT;
+
 CREATE CAST (date AS lunardate)
 WITH FUNCTION date2lunardate(date);
 

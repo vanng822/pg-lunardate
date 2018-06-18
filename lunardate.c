@@ -126,3 +126,33 @@ lunardate_minus_interval(PG_FUNCTION_ARGS) {
     }
     PG_RETURN_INT32(jd - (span->month * DAYS_PER_MONTH + span->day));
 }
+
+PG_FUNCTION_INFO_V1(lunardate_date_part);
+Datum
+lunardate_date_part(PG_FUNCTION_ARGS) {
+    char *part = text_to_cstring(PG_GETARG_TEXT_P(0));
+    int jd = PG_GETARG_INT32(1);
+    int res, is_unknown = 0;
+    solar_date *sdate;
+    lunar_date *ldate;
+    sdate = jd_to_date(jd);
+    ldate = solar2lunar(sdate->day, sdate->month, sdate->year, TIMEZONE);
+    pfree(sdate);
+    if (strcmp(part, "year") == 0) {
+      res = ldate->year;
+    } else if (strcmp(part, "month") == 0) {
+      res = ldate->month;
+    } else if (strcmp(part, "day") == 0) {
+      res = ldate->day;
+    } else {
+      is_unknown = 1;
+    }
+    pfree(ldate);
+    pfree(part);
+    if (is_unknown == 1) {
+      ereport(ERROR,
+        (errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
+        errmsg("Unknown date part")));
+    }
+    PG_RETURN_INT32(res);
+}
