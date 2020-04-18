@@ -216,7 +216,7 @@ lunar2solar(int lunar_day, int lunar_month, int lunar_year,
 		if (leap_month < 0) {
 			leap_month += 12;
 		}
-		if (lunar_leap != 0 && lunar_month != lunar_leap) {
+		if (lunar_leap != 0 && lunar_month != leap_month) {
 			res = (solar_date *)palloc(sizeof(solar_date));
 			res->day = 0;
 			res->month = 0;
