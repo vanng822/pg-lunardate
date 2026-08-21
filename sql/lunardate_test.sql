@@ -15,6 +15,14 @@ select id, from_date as lunar_date, from_date::date as solar_date from lunartest
 select * from lunartest where from_date = '2018-11-11';
 select '2018-11-11'::lunardate::date;
 select '2018-12-17'::date::lunardate;
+-- issue #11: day before the leap month 6 of 2025 starts
+select '2025-07-24'::date::lunardate;
+select '2025-07-25'::date::lunardate;
+select '2025-01-29'::date::lunardate;
+-- dates before 2000 exercise the negative sun longitude branch
+select '1990-01-01'::date::lunardate;
+select '1970-02-06'::date::lunardate;
+select '1991-06-04'::date::lunardate;
 select '1991-04-51'::lunardate;
 select '1991-13-12'::lunardate;
 select ('2018-11-13'::lunardate + interval '20 years');

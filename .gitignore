@@ -1,2 +1,6 @@
 lunardate.o
 lunardate.so
+log/
+results/
+regression.diffs
+regression.out

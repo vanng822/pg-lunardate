@@ -104,22 +104,25 @@ double sun_longitude(double jdn) {
 			+ 0.000290 * sin(dr * 3 * M);
 	L = L0 + DL; // true longitude, degree
 	L = L * dr;
-	L = L - M_PI * 2 * ((int) (L / (M_PI * 2))); // Normalize to (0, 2*PI)
+	// Normalize to (0, 2*PI). Must be floor(), not a cast: for dates before
+	// 2000-01-01 T is negative, L is negative, and a cast truncates towards
+	// zero which would leave L negative.
+	L = L - M_PI * 2 * floor(L / (M_PI * 2));
 	return L;
 }
 
 int get_sun_longitude(int jd, int time_zone) {
-	return (int) (sun_longitude(jd - 0.5 - time_zone / 24) / M_PI * 6);
+	return (int) (sun_longitude(jd - 0.5 - time_zone / 24.0) / M_PI * 6);
 }
 
 int get_new_moon_day(int k, int time_zone) {
-	return (int) (new_moon(k) + 0.5 + time_zone / 24);
+	return (int) (new_moon(k) + 0.5 + time_zone / 24.0);
 }
 
 int get_lunar_month11(int yyyy, int time_zone) {
 	int k, off, nm, sun_long;
 	off = jd_from_date(31, 12, yyyy) - 2415021;
-	k = (int) (off / 29.530588853);
+	k = (int) floor(off / 29.530588853);
 	nm = get_new_moon_day(k, time_zone);
 	sun_long = get_sun_longitude(nm, time_zone); // sun longitude at local midnight
 	if (sun_long >= 9) {
@@ -130,7 +133,7 @@ int get_lunar_month11(int yyyy, int time_zone) {
 
 int get_leap_month_offset(int a11, int time_zone) {
 	int k, last, arc, i;
-	k = (int) ((a11 - 2415021.076998695) / 29.530588853 + 0.5);
+	k = (int) floor((a11 - 2415021.076998695) / 29.530588853 + 0.5);
 	last = 0;
 	i = 1; // We start with the month following lunar month 11
 	arc = get_sun_longitude(get_new_moon_day(k + i, time_zone), time_zone);
@@ -150,7 +153,7 @@ solar2lunar(int dd, int mm, int yyyy, int time_zone) {
 
 	day_number = jd_from_date(dd, mm, yyyy);
 
-	k = (int) ((day_number - 2415021.076998695) / 29.530588853);
+	k = (int) floor((day_number - 2415021.076998695) / 29.530588853);
 	month_start = get_new_moon_day(k + 1, time_zone);
 	if (month_start > day_number) {
 		month_start = get_new_moon_day(k, time_zone);
@@ -205,7 +208,7 @@ lunar2solar(int lunar_day, int lunar_month, int lunar_year,
 		a11 = get_lunar_month11(lunar_year, time_zone);
 		b11 = get_lunar_month11(lunar_year + 1, time_zone);
 	}
-	k = (int) (0.5 + (a11 - 2415021.076998695) / 29.530588853);
+	k = (int) floor(0.5 + (a11 - 2415021.076998695) / 29.530588853);
 	off = lunar_month - 11;
 	if (off < 0) {
 		off += 12;
