@@ -42,6 +42,44 @@ select '2018-12-17'::date::lunardate;
  2018-11-11
 (1 row)
 
+-- issue #11: day before the leap month 6 of 2025 starts
+select '2025-07-24'::date::lunardate;
+ lunardate  
+------------
+ 2025-06-30
+(1 row)
+
+select '2025-07-25'::date::lunardate;
+ lunardate  
+------------
+ 2025-06-01
+(1 row)
+
+select '2025-01-29'::date::lunardate;
+ lunardate  
+------------
+ 2025-01-01
+(1 row)
+
+-- dates before 2000 exercise the negative sun longitude branch
+select '1990-01-01'::date::lunardate;
+ lunardate  
+------------
+ 1989-12-05
+(1 row)
+
+select '1970-02-06'::date::lunardate;
+ lunardate  
+------------
+ 1970-01-01
+(1 row)
+
+select '1991-06-04'::date::lunardate;
+ lunardate  
+------------
+ 1991-04-22
+(1 row)
+
 select '1991-04-51'::lunardate;
 ERROR:  date out of range: "1991-04-51"
 LINE 1: select '1991-04-51'::lunardate;
@@ -59,7 +97,7 @@ select ('2018-11-13'::lunardate + interval '20 years');
 select ('2018-11-13'::lunardate + interval '20 years 1 month');
   ?column?  
 ------------
- 2038-09-08
+ 2038-09-07
 (1 row)
 
 select ('2018-11-13'::lunardate + interval '20 years 1 day');
@@ -71,7 +109,7 @@ select ('2018-11-13'::lunardate + interval '20 years 1 day');
 select ('2018-11-13'::lunardate + interval '20 years 1 month 1 day');
   ?column?  
 ------------
- 2038-09-09
+ 2038-09-08
 (1 row)
 
 select ('2018-11-13'::lunardate + interval '20 years 1 month 1 day 1 hour');
@@ -101,7 +139,7 @@ select ('2018-11-13'::lunardate - interval '2 years 1 day');
 select ('2018-11-13'::lunardate - interval '2 years 1 month 1 day');
   ?column?  
 ------------
- 2016-10-30
+ 2016-10-29
 (1 row)
 
 select ('2018-11-13'::lunardate - interval '2 years 1 month 1 day 1 hour');
