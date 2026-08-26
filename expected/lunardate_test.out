@@ -50,9 +50,9 @@ select '2025-07-24'::date::lunardate;
 (1 row)
 
 select '2025-07-25'::date::lunardate;
- lunardate  
-------------
- 2025-06-01
+  lunardate  
+-------------
+ 2025-r06-01
 (1 row)
 
 select '2025-01-29'::date::lunardate;
