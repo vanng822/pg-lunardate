@@ -126,4 +126,12 @@ runs the same regression test automatically for pushes and pull requests.
 
 ## License
 
-No license has been specified yet.
+No open-source license is currently granted for this repository. The calendar
+calculation code in `lib/amlich.c` is derived from work by Ho Ngoc Duc, whose
+original notice allows non-commercial use and requests contact for commercial
+use. The author was contacted regarding licensing, but no response was
+received.
+
+See [`NOTICE`](NOTICE) for the full licensing notice. Do not use the derived
+calendar calculation code commercially without permission from the original
+author.

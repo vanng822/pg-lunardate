@@ -1,0 +1,17 @@
+pg-lunardate NOTICE
+
+The calendar calculation code in lib/amlich.c is a conversion of JavaScript
+code developed by Ho Ngoc Duc.
+
+The original source notice states that the code is available for non-commercial
+use and that commercial use requires contacting the original author:
+
+http://www.informatik.uni-leipzig.de/~duc/amlich/
+
+The author was contacted regarding licensing, but no response or additional
+permission was received.
+
+Accordingly, this repository does not grant a license for commercial use of the
+derived calendar calculation code. No open-source license is currently granted
+for this repository. Existing copyright and attribution notices must be
+preserved.
