@@ -11,13 +11,21 @@ PG_FUNCTION_INFO_V1(lunardate_in);
 Datum
 lunardate_in(PG_FUNCTION_ARGS) {
     char *str = PG_GETARG_CSTRING(0);
-    int year, month, day, result;
+    int year, month, day, result, is_leap;
     solar_date *d;
     lunar_date *l;
-    if (sscanf(str, "%u-%u-%u", &year, &month, &day) != 3) {
+    char leap_char;
+    if (sscanf(str, "%d-%c%d-%d", &year, &leap_char, &month, &day) == 4 && 
+       (leap_char == 'r' || leap_char == 'R' || leap_char == 'L')) {
+        is_leap = 1;
+    } 
+    // Fallback: Standard "YYYY-MM-DD"
+    else if (sscanf(str, "%d-%d-%d", &year, &month, &day) == 3) {
+        is_leap = 0;
+    } else {
         ereport(ERROR,
-          (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-          errmsg("invalid input syntax for lunardate: \"%s\"", str)));
+            (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+             errmsg("invalid input syntax for lunardate: \"%s\"", str)));
     }
     // lunar2solar just accumulate total number of julian days
     // It first calculate for the year and the month
@@ -29,9 +37,9 @@ lunardate_in(PG_FUNCTION_ARGS) {
     // correct lunar example:
     // lunar 1991-04-22 -> solar 1991-06-04 -> lunar 1991-04-22
     // TODO: better way to do this check
-    d = lunar2solar(day, month, year, 0, TIMEZONE);
+    d = lunar2solar(day, month, year, is_leap, TIMEZONE);
     l = solar2lunar(d->day, d->month, d->year, TIMEZONE);
-    if (l->year != year || l->month != month || l->day != day) {
+    if (l->year != year || l->month != month || l->day != day || l->leap != is_leap) {
       pfree(d);
       pfree(l);
       ereport(ERROR,
@@ -64,7 +72,11 @@ lunardate_out(PG_FUNCTION_ARGS) {
     pfree(sdate);
     int size = 10 + VARHDRSZ;
     result = (char *) palloc(size);
-    snprintf(result, size, "%04u-%02u-%02u", ldate->year, ldate->month, ldate->day);
+    if (ldate->leap) {
+      snprintf(result, size, "%04d-r%02d-%02d", ldate->year, ldate->month, ldate->day);
+    } else {
+      snprintf(result, size, "%04d-%02d-%02d", ldate->year, ldate->month, ldate->day);
+    }
     pfree(ldate);
     PG_RETURN_CSTRING(result);
 }

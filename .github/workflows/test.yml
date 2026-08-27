@@ -1,0 +1,48 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build test image
+        run: docker build --tag pg-lunardate:test .
+
+      - name: Start PostgreSQL
+        run: |
+          docker run --detach \
+            --name pg-lunardate-postgres \
+            --env POSTGRES_PASSWORD=postgres \
+            --publish 5432:5432 \
+            pg-lunardate:test
+
+      - name: Wait for PostgreSQL
+        run: |
+          for attempt in {1..30}; do
+            if docker exec pg-lunardate-postgres pg_isready -U postgres; then
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs pg-lunardate-postgres
+          exit 1
+
+      - name: Run regression tests
+        run: |
+          docker exec pg-lunardate-postgres chmod -R a+rwX /usr/src/app
+          docker exec --user postgres pg-lunardate-postgres make installcheck
+
+      - name: Show PostgreSQL logs on failure
+        if: failure()
+        run: docker logs pg-lunardate-postgres
+
+      - name: Clean up PostgreSQL
+        if: always()
+        run: docker rm --force pg-lunardate-postgres

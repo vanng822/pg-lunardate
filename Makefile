@@ -7,3 +7,16 @@ MODULES = lunardate          # our c module file to build
 PG_CONFIG = pg_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
+
+TEST_IMAGE = pg-lunardate:test
+
+.PHONY: test
+test:
+	docker build --tag $(TEST_IMAGE) .
+	@set -eu; \
+	container_id=$$(docker run --detach --env POSTGRES_PASSWORD=postgres $(TEST_IMAGE)); \
+	cleanup() { docker rm --force "$$container_id" >/dev/null 2>&1 || true; }; \
+	trap cleanup EXIT; \
+	until docker exec "$$container_id" pg_isready -U postgres >/dev/null 2>&1; do sleep 1; done; \
+	docker exec "$$container_id" chmod -R a+rwX /usr/src/app; \
+	docker exec --user postgres "$$container_id" make installcheck
