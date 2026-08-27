@@ -13,6 +13,18 @@ insert into lunartest(from_date, to_date) values('2018-11-11', '2018-12-01');
 select * from lunartest;
 select id, from_date as lunar_date, from_date::date as solar_date from lunartest;
 select * from lunartest where from_date = '2018-11-11';
+select
+  '2018-10-10'::lunardate < '2018-11-11'::lunardate as less_than,
+  '2018-10-10'::lunardate <= '2018-10-10'::lunardate as less_than_or_equal,
+  '2018-11-11'::lunardate > '2018-10-10'::lunardate as greater_than,
+  '2018-11-11'::lunardate >= '2018-11-11'::lunardate as greater_than_or_equal,
+  '2018-10-10'::lunardate <> '2018-11-11'::lunardate as not_equal;
+select id from lunartest
+where from_date between '2018-10-10' and '2018-11-11'
+order by id;
+select id from lunartest
+where from_date in ('2018-10-10', '2018-12-01')
+order by id;
 select '2018-11-11'::lunardate::date;
 select '2018-12-17'::date::lunardate;
 -- issue #11: day before the leap month 6 of 2025 starts
