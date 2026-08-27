@@ -103,7 +103,26 @@ SELECT lunardate_date_part('day', '2018-11-13'::lunardate);
 
 ## Run the tests
 
-The regression test uses PostgreSQL's PGXS test framework:
+The regression test uses PostgreSQL's PGXS test framework. To run it in the
+same PostgreSQL 16 container used by CI:
+
+```sh
+docker build --tag pg-lunardate:test .
+container_id=$(docker run --detach \
+	--env POSTGRES_PASSWORD=postgres \
+	pg-lunardate:test)
+
+until docker exec "$container_id" pg_isready -U postgres; do
+	sleep 1
+done
+
+docker exec "$container_id" chmod -R a+rwX /usr/src/app
+docker exec --user postgres "$container_id" make installcheck
+docker rm --force "$container_id"
+```
+
+If PostgreSQL and the extension are already installed locally, run the test
+directly from the repository:
 
 ```sh
 make installcheck

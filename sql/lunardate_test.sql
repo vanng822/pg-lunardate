@@ -18,6 +18,7 @@ select '2018-12-17'::date::lunardate;
 -- issue #11: day before the leap month 6 of 2025 starts
 select '2025-07-24'::date::lunardate;
 select '2025-07-25'::date::lunardate;
+select '2025-r06-01'::lunardate::date;
 select '2025-01-29'::date::lunardate;
 -- dates before 2000 exercise the negative sun longitude branch
 select '1990-01-01'::date::lunardate;
