@@ -30,6 +30,34 @@ select * from lunartest where from_date = '2018-11-11';
   2 | 2018-11-11 | 2018-12-01
 (1 row)
 
+select
+  '2018-10-10'::lunardate < '2018-11-11'::lunardate as less_than,
+  '2018-10-10'::lunardate <= '2018-10-10'::lunardate as less_than_or_equal,
+  '2018-11-11'::lunardate > '2018-10-10'::lunardate as greater_than,
+  '2018-11-11'::lunardate >= '2018-11-11'::lunardate as greater_than_or_equal,
+  '2018-10-10'::lunardate <> '2018-11-11'::lunardate as not_equal;
+ less_than | less_than_or_equal | greater_than | greater_than_or_equal | not_equal 
+-----------+--------------------+--------------+-----------------------+-----------
+ t         | t                  | t            | t                     | t
+(1 row)
+
+select id from lunartest
+where from_date between '2018-10-10' and '2018-11-11'
+order by id;
+ id 
+----
+  1
+  2
+(2 rows)
+
+select id from lunartest
+where from_date in ('2018-10-10', '2018-12-01')
+order by id;
+ id 
+----
+  1
+(1 row)
+
 select '2018-11-11'::lunardate::date;
     date    
 ------------
