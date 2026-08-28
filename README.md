@@ -76,6 +76,20 @@ SELECT '2018-12-17'::date::lunardate;
 SELECT '2025-r06-01'::lunardate;
 ```
 
+Change timezone
+
+> [!WARNING]
+> The calculation may not work well with other timezone than Vietnamese timezone
+
+```sql
+-- View current timezone setting
+SHOW lunardate.timezone;
+
+-- Change it for the current session
+SET lunardate.timezone = 8;
+
+```
+
 The type can be stored in tables and compared or indexed:
 
 ```sql

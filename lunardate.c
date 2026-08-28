@@ -7,6 +7,30 @@
 
 PG_MODULE_MAGIC;
 
+#include "utils/guc.h"
+
+// Define the variable that Postgres will manage
+int lunardate_timezone = 7;
+
+void _PG_init(void)
+{
+    // Define a custom GUC variable: "lunardate.timezone"
+    DefineCustomIntVariable(
+        "lunardate.timezone",                    // Name of the setting
+        "Sets the timezone offset for lunar date calculations.", // Description
+        NULL,                                    // Extra info
+        &lunardate_timezone,                     // Pointer to your variable
+        7,                                       // Default value
+        -14,                                     // Minimum value
+        14,                                      // Maximum value
+        PGC_USERSET,                             // Context (can be changed by user per-session)
+        0,                                       // Flags
+        NULL,                                    // Check hook
+        NULL,                                    // Assign hook
+        NULL                                     // Show hook
+    );
+}
+
 PG_FUNCTION_INFO_V1(lunardate_in);
 Datum
 lunardate_in(PG_FUNCTION_ARGS) {
@@ -37,8 +61,9 @@ lunardate_in(PG_FUNCTION_ARGS) {
     // correct lunar example:
     // lunar 1991-04-22 -> solar 1991-06-04 -> lunar 1991-04-22
     // TODO: better way to do this check
-    d = lunar2solar(day, month, year, is_leap, TIMEZONE);
-    l = solar2lunar(d->day, d->month, d->year, TIMEZONE);
+    int current_tz = lunardate_timezone;
+    d = lunar2solar(day, month, year, is_leap, current_tz);
+    l = solar2lunar(d->day, d->month, d->year, current_tz);
     if (l->year != year || l->month != month || l->day != day || l->leap != is_leap) {
       pfree(d);
       pfree(l);
@@ -67,8 +92,9 @@ lunardate_out(PG_FUNCTION_ARGS) {
     solar_date *sdate;
     lunar_date *ldate;
     //elog(INFO, "lunardate_out %d", jd);
+    int current_tz = lunardate_timezone;
     sdate = jd_to_date(jd);
-    ldate = solar2lunar(sdate->day, sdate->month, sdate->year, TIMEZONE);
+    ldate = solar2lunar(sdate->day, sdate->month, sdate->year, current_tz);
     pfree(sdate);
     int size = 10 + VARHDRSZ;
     result = (char *) palloc(size);
@@ -145,10 +171,11 @@ lunardate_date_part(PG_FUNCTION_ARGS) {
     char *part = text_to_cstring(PG_GETARG_TEXT_P(0));
     int jd = PG_GETARG_INT32(1);
     int res, is_unknown = 0;
+    int current_tz = lunardate_timezone;
     solar_date *sdate;
     lunar_date *ldate;
     sdate = jd_to_date(jd);
-    ldate = solar2lunar(sdate->day, sdate->month, sdate->year, TIMEZONE);
+    ldate = solar2lunar(sdate->day, sdate->month, sdate->year, current_tz);
     pfree(sdate);
     if (strcmp(part, "year") == 0) {
       res = ldate->year;
