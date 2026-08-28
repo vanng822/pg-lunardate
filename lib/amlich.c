@@ -8,8 +8,6 @@
 #include <math.h>
 #include "postgres.h"
 
-const int TIMEZONE = 7;
-
 typedef struct {
 	int day;
 	int month;
