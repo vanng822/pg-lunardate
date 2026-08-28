@@ -19,4 +19,9 @@ test:
 	trap cleanup EXIT; \
 	until docker exec "$$container_id" pg_isready -U postgres >/dev/null 2>&1; do sleep 1; done; \
 	docker exec "$$container_id" chmod -R a+rwX /usr/src/app; \
-	docker exec --user postgres "$$container_id" make installcheck
+	docker exec --user postgres "$$container_id" make installcheck || { \
+		echo "=== TEST FAILURE DETECTED: regression.diffs ==="; \
+		docker exec --user postgres "$$container_id" cat /usr/src/app/regression.diffs 2>/dev/null || \
+		docker exec --user postgres "$$container_id" find /usr/src/app -name "regression.diffs" -exec cat {} +; \
+		exit 1; \
+	}

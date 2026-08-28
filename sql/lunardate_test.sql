@@ -8,6 +8,10 @@ CREATE TABLE lunartest(
   to_date lunardate
 );
 SET DateStyle=ISO;
+SHOW lunardate.timezone;
+SET lunardate.timezone = 8;
+SHOW lunardate.timezone;
+SET lunardate.timezone = 7;
 insert into lunartest(from_date, to_date) values('2018-10-10', '2019-01-13');
 insert into lunartest(from_date, to_date) values('2018-11-11', '2018-12-01');
 select * from lunartest;
